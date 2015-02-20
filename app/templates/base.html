@@ -1,0 +1,14 @@
+<html>
+	<head>
+		{% if title %}
+		<title>{{ title }}</title>
+		{% else %}
+		<title>freechan</title>
+		{% endif %}
+	</head>
+	<body>
+		<div><a href="/index">Main</a></div>
+		<hr>
+		{% block content %}{% endblock %}
+	</body>
+</html>
