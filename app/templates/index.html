@@ -1,4 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-	Content eventually.
+	<form action="" method="post" name="post">
+		{{ form.hidden_tag() }}
+		<table>
+			<tr>
+				<td>{{ form.name(size=64) }} | {{ form.title(size=64) }}</td>
+			</tr>
+			<tr>
+				<td>{{ form.post(size=1000) }}</td>
+			</tr>
+		</table>
+	</form>
 {% endblock %}
