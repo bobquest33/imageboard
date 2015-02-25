@@ -11,17 +11,19 @@ def index():
 	form = PostForm()
 	if form.validate_on_submit():
 		flash("Post submitted")
+		new_thread_id=db.session.query(db.func.max(Post.id)).scalar() + 1
 		post = Post(body=form.body.data, 
 					title=form.title.data, 
 					name=form.name.data,
-					thread_id=1,
+					thread_id=new_thread_id,
 					timestamp=datetime.utcnow(),
 					email="",
 					tripcode="")
 		db.session.add(post)
 		db.session.commit()
 		return redirect(url_for('index'))
-	return render_template('index.html', title='Main Page', form=form)
+	posts = models.Post.query.filter(models.Post.id==models.Post.thread_id).all()
+	return render_template('index.html', title='Main Page', form=form, posts=posts)
 
 
 @app.errorhandler(404)

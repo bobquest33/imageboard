@@ -10,8 +10,5 @@ class Post(db.Model):
 	email = db.Column(db.String(64))
 	body = db.Column(db.String(1000))
 
-	def is_thread(self):
-		return id == thread_id
-
-	def threads():
-		return Post.query.filter(is_thread).order_by(Post.timestamp.desc())
+	def __repr__(self):
+		return '<Post %r>' % self.id

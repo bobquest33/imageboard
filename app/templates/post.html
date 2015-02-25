@@ -1,3 +1,7 @@
-<table>
-	{{ post.body }}
-</table>
+{% block content %}
+	{% for p in posts %}
+		<table>
+			{{ p.body }}
+		</table>
+	{% endfor %}
+{% endblock %}
