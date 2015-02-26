@@ -1,5 +1,7 @@
 <html>
 	<head>
+		<!-- Bootstrap -->
+		<link href="/static/css/style.css" rel="stylesheet">
 		{% if title %}
 		<title>{{ title }}</title>
 		{% else %}
@@ -7,8 +9,10 @@
 		{% endif %}
 	</head>
 	<body>
-		<div><a href="/index">Main</a></div>
+		<br>
+		<br>
 		<hr>
+		<div><a href="/index">Main</a></div>
 		{% block content %}{% endblock %}
 	</body>
 </html>

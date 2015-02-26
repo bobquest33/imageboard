@@ -3,12 +3,13 @@
 		{{ form.hidden_tag() }}
 		<table>
 			<tr>
-				<td>Name: {{ form.name(size=64) }} | Title: {{ form.title(size=64) }}</td>
+				<td>Name: {{ form.name(size=20) }} Trip: {{ form.tripcode(size=10) }} Email: {{ form.email(size=20) }} Title: {{ form.title(size=20) }}</td>
 			</tr>
 			<tr>
 				<td>{{ form.body(size=100) }}</td>
 			</tr>
 		</table>
 		<input type="submit" value="Submit">
+		<hr>
 	</form>
 {% endblock %}

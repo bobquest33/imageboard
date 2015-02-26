@@ -11,10 +11,16 @@ def index():
 	form = PostForm()
 	if form.validate_on_submit():
 		flash("Post submitted")
+		
 		new_thread_id=db.session.query(db.func.max(Post.id)).scalar() + 1
+		if form.name.data=="":
+			name = "Anonymous"
+		else:
+			name = form.name.data
+		
 		post = Post(body=form.body.data, 
 					title=form.title.data, 
-					name=form.name.data,
+					name=name,
 					thread_id=new_thread_id,
 					timestamp=datetime.utcnow(),
 					email="",
@@ -22,7 +28,7 @@ def index():
 		db.session.add(post)
 		db.session.commit()
 		return redirect(url_for('index'))
-	posts = models.Post.query.filter(models.Post.id==models.Post.thread_id).all()
+	posts = models.Post.query.filter(models.Post.id==models.Post.thread_id).order_by(models.Post.timestamp.desc())
 	return render_template('index.html', title='Main Page', form=form, posts=posts)
 	
 	
@@ -31,9 +37,15 @@ def thread(thread_id):
 	form = PostForm()
 	if form.validate_on_submit():
 		flash("Reply submitted")
+		
+		if form.name.data=="":
+			name = "Anonymous"
+		else:
+			name = form.name.data
+			
 		post = Post(body=form.body.data,
 					title="",
-					name=form.name.data,
+					name=name,
 					thread_id=thread_id,
 					timestamp=datetime.utcnow(),
 					email="",
@@ -41,8 +53,8 @@ def thread(thread_id):
 		db.session.add(post)
 		db.session.commit()
 		return redirect(url_for('thread', thread_id=thread_id))
-	posts = models.Post.query.filter(models.Post.thread_id==thread_id).all()
-	return render_template('index.html', title='coming soon', form=form, posts=posts)
+	posts = models.Post.query.filter(models.Post.thread_id==thread_id).order_by(models.Post.timestamp.desc())
+	return render_template('index.html', title='Thread '+str(thread_id), form=form, posts=posts)
 
 
 @app.errorhandler(404)

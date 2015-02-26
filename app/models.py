@@ -13,5 +13,5 @@ class Post(db.Model):
 	def __repr__(self):
 		return '<Post %r>' % self.id
 		
-	def is_thread(self):
-		return self.id == self.thread_id
+	def thread_posts(self):
+		return Post.query.filter(Post.thread_id==self.thread_id).order_by(models.Post.timestamp.desc())

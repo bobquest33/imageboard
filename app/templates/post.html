@@ -1,7 +1,10 @@
 {% block content %}
 	{% for p in posts %}
 		<table>
+			{{ p.name }}  {{ p.title }}  {{ p.timestamp }}  #{{ p.id }} [<a href="{{url_for('thread', thread_id=p.thread_id) }}">Reply</a>]
+			<br>
 			{{ p.body }}
 		</table>
+		<br>
 	{% endfor %}
 {% endblock %}
