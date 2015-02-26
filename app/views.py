@@ -24,6 +24,25 @@ def index():
 		return redirect(url_for('index'))
 	posts = models.Post.query.filter(models.Post.id==models.Post.thread_id).all()
 	return render_template('index.html', title='Main Page', form=form, posts=posts)
+	
+	
+@app.route('/thread/<int:thread_id>', methods=['GET','POST'])
+def thread(thread_id):
+	form = PostForm()
+	if form.validate_on_submit():
+		flash("Reply submitted")
+		post = Post(body=form.body.data,
+					title="",
+					name=form.name.data,
+					thread_id=thread_id,
+					timestamp=datetime.utcnow(),
+					email="",
+					tripcode="")
+		db.session.add(post)
+		db.session.commit()
+		return redirect(url_for('thread', thread_id=thread_id))
+	posts = models.Post.query.filter(models.Post.thread_id==thread_id).all()
+	return render_template('index.html', title='coming soon', form=form, posts=posts)
 
 
 @app.errorhandler(404)
