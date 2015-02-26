@@ -8,3 +8,10 @@ class PostForm(Form):
 	name = StringField('name')
 	tripcode = StringField('trip')
 	body = StringField('body', validators=[DataRequired()])
+	
+class ReplyForm(Form):
+	title = StringField('title')
+	email = StringField('email')
+	name = StringField('name')
+	tripcode = StringField('trip')
+	body = StringField('body', validators=[DataRequired()])

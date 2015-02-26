@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for
 from app import app, db, models
-from .forms import PostForm
+from .forms import PostForm, ReplyForm
 from .models import Post
 from datetime import datetime
 
@@ -34,7 +34,7 @@ def index():
 	
 @app.route('/thread/<int:thread_id>', methods=['GET','POST'])
 def thread(thread_id):
-	form = PostForm()
+	form = ReplyForm()
 	if form.validate_on_submit():
 		flash("Reply submitted")
 		
@@ -53,8 +53,8 @@ def thread(thread_id):
 		db.session.add(post)
 		db.session.commit()
 		return redirect(url_for('thread', thread_id=thread_id))
-	posts = models.Post.query.filter(models.Post.thread_id==thread_id).order_by(models.Post.timestamp.desc())
-	return render_template('index.html', title='Thread '+str(thread_id), form=form, posts=posts)
+	posts = models.Post.query.filter(models.Post.thread_id==thread_id)
+	return render_template('thread.html', title='Thread '+str(thread_id), form=form, posts=posts)
 
 
 @app.errorhandler(404)

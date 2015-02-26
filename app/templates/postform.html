@@ -8,8 +8,11 @@
 			<tr>
 				<td>{{ form.body(size=100) }}</td>
 			</tr>
+			{% for error in form.errors %}
+				<span>{{ error }}</span>
+			{% endfor %}<br>
 		</table>
 		<input type="submit" value="Submit">
-		<hr>
 	</form>
+	<hr>
 {% endblock %}
