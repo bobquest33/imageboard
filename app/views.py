@@ -3,7 +3,7 @@ from app import app, db, models
 from .forms import PostForm, ReplyForm
 from .models import Post
 from datetime import datetime
-
+from sqlalchemy import func
 
 @app.route('/', methods=['GET','POST'])
 @app.route('/index', methods=['GET','POST'])
@@ -28,7 +28,7 @@ def index():
 		db.session.add(post)
 		db.session.commit()
 		return redirect(url_for('index'))
-	posts = models.Post.query.filter(models.Post.id==models.Post.thread_id).order_by(models.Post.timestamp.desc())
+	posts = models.Post.query.join(models.Post.thread_posts, aliased=True).group_by(models.Post).order_by(func.max(models.Post.timestamp).desc())
 	return render_template('index.html', title='Main Page', form=form, posts=posts)
 	
 	
