@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, request, send_from_
 from app import app, db, models
 from .forms import PostForm, ReplyForm
 from .models import Post
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import func
 from werkzeug import secure_filename
 from config import ALLOWED_EXTENSIONS
@@ -25,17 +25,21 @@ def index():
 		else:
 			name = form.name.data
 		
+		timestamp = datetime.utcnow()
 			
 		file = request.files['file']
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
+			#fname = str(int(timestamp.replace(tzinfo=timezone.utc).timestamp()*1000)) + "." + filename.rsplit('.', 1)[1]
+			# path is hardcoded because using app.config appears to give different paths for save and send_from_directory, so they must be manually changed to be consistent
+			# save will give a FileNotFoundError if the directory does not exist
 			file.save("app/uploads/" + filename)
 		
 		post = Post(body=form.body.data, 
 					title=form.title.data, 
 					name=name,
 					thread_id=new_thread_id,
-					timestamp=datetime.utcnow(),
+					timestamp=timestamp,
 					email=form.email.data,
 					tripcode="",
 					filename=filename)
@@ -78,7 +82,7 @@ def allowed_file(filename):
 		
 @app.route('/uploads/<filename>', methods=['GET'])
 def uploaded_file(filename):
-	#return render_template('image.html')
+	# send_from_directory will attempt to load any particular file from either "uploads" or "app/uploads", chosen seemingly at random. link the two folders or it will not function consistently
 	return send_from_directory("uploads", filename)
 		
 
