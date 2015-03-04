@@ -29,7 +29,7 @@ def index():
 		file = request.files['file']
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
-			file.save(os.path.join("app/uploads", filename))
+			file.save("app/uploads/" + filename)
 		
 		post = Post(body=form.body.data, 
 					title=form.title.data, 
@@ -79,7 +79,7 @@ def allowed_file(filename):
 @app.route('/uploads/<filename>', methods=['GET'])
 def uploaded_file(filename):
 	#return render_template('image.html')
-	return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+	return send_from_directory("uploads", filename)
 		
 
 @app.errorhandler(404)
