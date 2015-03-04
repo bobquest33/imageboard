@@ -1,5 +1,5 @@
 {% block content %}
-	<form action="" method="post" name="post">
+	<form action="" method="POST" name="post" enctype=multipart/form-data>
 		{{ form.hidden_tag() }}
 		<table>
 			<tr>
@@ -7,6 +7,9 @@
 			</tr>
 			<tr>
 				<td>{{ form.body(size=100) }}</td>
+			</tr>
+			<tr>
+				<td><input type=file name=file></td>
 			</tr>
 			{% for error in form.errors %}
 				<span>{{ error }}</span>

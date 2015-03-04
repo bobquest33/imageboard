@@ -8,6 +8,7 @@ class PostForm(Form):
 	name = StringField('name')
 	tripcode = StringField('trip')
 	body = StringField('body', validators=[DataRequired()])
+	#filename = StringField('filename')
 	
 class ReplyForm(Form):
 	title = StringField('title')
