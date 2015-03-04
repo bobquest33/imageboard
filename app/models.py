@@ -10,6 +10,7 @@ class Post(db.Model):
 	tripcode = db.Column(db.String(64))
 	email = db.Column(db.String(64))
 	filename = db.Column(db.String(64))
+	fname = db.Column(db.String(64))
 	body = db.Column(db.String(1000))
 	thread_posts = db.relationship('Post',
 									backref=db.backref('thread', remote_side=[id]))

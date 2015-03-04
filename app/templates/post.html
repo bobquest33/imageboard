@@ -4,7 +4,7 @@
 			{{ p.name }}  {{ p.email }}  {{ p.title }}  {{ p.timestamp }}  #{{ p.id }} [<a href="{{ url_for('thread', thread_id=p.thread_id) }}">Reply</a>]
 			<br>
 			{{ p.filename }} <br>
-			<a href="/uploads/{{ p.filename }}"><img src="/uploads/{{ p.filename }}" height=100 width=100></a>
+			<a href="/uploads/{{ p.fname }}"><img src="/uploads/{{ p.fname }}" height=100 width=100></a>
 			{{ p.body }}
 		</table>
 		<br>

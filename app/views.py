@@ -30,10 +30,10 @@ def index():
 		file = request.files['file']
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
-			#fname = str(int(timestamp.replace(tzinfo=timezone.utc).timestamp()*1000)) + "." + filename.rsplit('.', 1)[1]
 			# path is hardcoded because using app.config appears to give different paths for save and send_from_directory, so they must be manually changed to be consistent
 			# save will give a FileNotFoundError if the directory does not exist
-			file.save("app/uploads/" + filename)
+			fname = get_time_filename(timestamp, filename)
+			file.save("app/uploads/" + fname)
 		
 		post = Post(body=form.body.data, 
 					title=form.title.data, 
@@ -42,7 +42,8 @@ def index():
 					timestamp=timestamp,
 					email=form.email.data,
 					tripcode="",
-					filename=filename)
+					filename=filename,
+					fname=fname)
 		db.session.add(post)
 		db.session.commit()
 		return redirect(url_for('index'))
@@ -62,13 +63,24 @@ def thread(thread_id):
 		else:
 			name = form.name.data
 			
+		timestamp = datetime.utcnow()
+			
+		file = request.files['file']
+		if file and allowed_file(file.filename):
+			filename = secure_filename(file.filename)
+			fname = get_time_filename(timestamp, filename)
+			file.save("app/uploads/" + fname)
+			
+			
 		post = Post(body=form.body.data,
 					title="",
 					name=name,
 					thread_id=thread_id,
 					timestamp=datetime.utcnow(),
 					email="",
-					tripcode="")
+					tripcode="",
+					filename=filename,
+					fname=fname)
 		db.session.add(post)
 		db.session.commit()
 		return redirect(url_for('thread', thread_id=thread_id))
@@ -85,6 +97,8 @@ def uploaded_file(filename):
 	# send_from_directory will attempt to load any particular file from either "uploads" or "app/uploads", chosen seemingly at random. link the two folders or it will not function consistently
 	return send_from_directory("uploads", filename)
 		
+def get_time_filename(timestamp, filename):
+	return str(int(timestamp.replace(tzinfo=timezone.utc).timestamp()*1000)) + "." + filename.rsplit('.', 1)[1]
 
 @app.errorhandler(404)
 def not_found_error(error):
