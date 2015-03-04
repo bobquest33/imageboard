@@ -31,10 +31,9 @@ def index():
 		file = request.files['file']
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
-			# path is hardcoded because using app.config appears to give different paths for save and send_from_directory, so they must be manually changed to be consistent
-			# save will give a FileNotFoundError if the directory does not exist
+			# will throw an error if the uploads folder does not already exist
 			fname = time_filename(timestamp, filename)
-			file.save("app/uploads/" + fname)
+			file.save(os.path.join(app.root_path, "uploads", fname))
 		
 		nametrip = generate_tripcode(name)
 		
@@ -72,7 +71,7 @@ def thread(thread_id):
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
 			fname = time_filename(timestamp, filename)
-			file.save("app/uploads/" + fname)
+			file.save(os.path.join(app.root_path, "uploads", fname))
 			
 			
 		nametrip = generate_tripcode(name)
@@ -100,8 +99,7 @@ def allowed_file(filename):
 		
 @app.route('/uploads/<filename>', methods=['GET'])
 def uploaded_file(filename):
-	# send_from_directory will attempt to load any particular file from either "uploads" or "app/uploads", chosen seemingly at random. link the two folders or it will not function consistently
-	return send_from_directory("uploads", filename)
+	return send_from_directory(os.path.join(app.root_path, "uploads"), filename)
 		
 def time_filename(timestamp, filename):
 	return str(int(timestamp.replace(tzinfo=timezone.utc).timestamp()*1000)) + "." + filename.rsplit('.', 1)[1]
