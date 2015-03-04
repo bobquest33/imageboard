@@ -7,6 +7,7 @@ from sqlalchemy import func
 from werkzeug import secure_filename
 from config import ALLOWED_EXTENSIONS
 import os
+import hashlib
 
 @app.route('/', methods=['GET','POST'])
 @app.route('/index', methods=['GET','POST'])
@@ -32,16 +33,18 @@ def index():
 			filename = secure_filename(file.filename)
 			# path is hardcoded because using app.config appears to give different paths for save and send_from_directory, so they must be manually changed to be consistent
 			# save will give a FileNotFoundError if the directory does not exist
-			fname = get_time_filename(timestamp, filename)
+			fname = time_filename(timestamp, filename)
 			file.save("app/uploads/" + fname)
+		
+		nametrip = generate_tripcode(name)
 		
 		post = Post(body=form.body.data, 
 					title=form.title.data, 
-					name=name,
+					name=nametrip[0],
 					thread_id=new_thread_id,
 					timestamp=timestamp,
 					email=form.email.data,
-					tripcode="",
+					tripcode=nametrip[1],
 					filename=filename,
 					fname=fname)
 		db.session.add(post)
@@ -68,17 +71,20 @@ def thread(thread_id):
 		file = request.files['file']
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
-			fname = get_time_filename(timestamp, filename)
+			fname = time_filename(timestamp, filename)
 			file.save("app/uploads/" + fname)
 			
 			
+		nametrip = generate_tripcode(name)
+		
+		
 		post = Post(body=form.body.data,
 					title="",
-					name=name,
+					name=nametrip[0],
 					thread_id=thread_id,
 					timestamp=datetime.utcnow(),
-					email="",
-					tripcode="",
+					email=form.email.data,
+					tripcode=nametrip[1],
 					filename=filename,
 					fname=fname)
 		db.session.add(post)
@@ -97,8 +103,18 @@ def uploaded_file(filename):
 	# send_from_directory will attempt to load any particular file from either "uploads" or "app/uploads", chosen seemingly at random. link the two folders or it will not function consistently
 	return send_from_directory("uploads", filename)
 		
-def get_time_filename(timestamp, filename):
+def time_filename(timestamp, filename):
 	return str(int(timestamp.replace(tzinfo=timezone.utc).timestamp()*1000)) + "." + filename.rsplit('.', 1)[1]
+	
+def generate_tripcode(name):
+	# returns a list containing the name and a hashed tripcode
+	nametrip = name.rsplit(sep="#", maxsplit=1)
+	if len(nametrip) == 1:
+		nametrip.append("")
+	else:
+		hash_object = hashlib.md5(nametrip[1].encode())
+		nametrip[1] = hash_object.hexdigest()[0:10]
+	return nametrip
 
 @app.errorhandler(404)
 def not_found_error(error):
