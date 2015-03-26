@@ -1,13 +1,18 @@
 {% block content %}
-	{% for p in posts %}
-		<table>
-			{{ p.name }} {{ p.tripcode }}  {{ p.email }}  {{ p.title }}  {{ p.timestamp }}  #{{ p.id }} [<a href="{{ url_for('thread', thread_id=p.thread_id) }}">Reply</a>]
-			<br>
-			{{ p.filename }} <br>
-			<a href="/uploads/{{ p.fname }}"><img src="/uploads/{{ p.fname }}" height=100 width=100></a>
-			{{ p.body }}
-		</table>
-		<br>
-	{% endfor %}
-	<hr>
+{% for p in posts %}
+  <table>
+    {% if p.email != "" %}
+      <a href="mailto:{{ p.email }}">{{ p.name }}</a>
+      {% else %}
+        {{ p.name }}
+      {% endif %}
+      {{ p.tripcode }}  {{ p.title }}  {{ p.timestamp }}  #{{ p.id }} [<a href="{{ url_for('thread', thread_id=p.thread_id) }}">Reply</a>]
+      <br>
+      {{ p.filename }} <br>
+      <a href="/uploads/{{ p.fname }}"><img src="/uploads/{{ p.fname }}" height=100 width=100></a>
+      {{ p.body }}
+  </table>
+  <br>
+{% endfor %}
+<hr>
 {% endblock %}
